@@ -10,12 +10,19 @@ mongoose.connect("mongodb://localhost:27017/fruitsDB", {
 
 // Create a new schema/model for fruits collection
 const fruitSchema = new mongoose.Schema({
-  name: String,
-  rating: Number,
+  name: {
+    type: String,
+    required: [true, "You didn't provide a name for the fruit!"]
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 10
+  },
   review: String
 });
 
-// Create a collection
+//Create a collection
 const Fruit = mongoose.model("Fruit", fruitSchema);
 
 const fruit = new Fruit({
@@ -26,13 +33,13 @@ const fruit = new Fruit({
 
 const kivi = new Fruit({
   name: "Kivi",
-  score: 8,
+  rating: 8,
   review: "Nice"
 });
 
 const banana = new Fruit({
   name: "banana",
-  score: 10,
+  rating: 11,
   review: "The best fruit ever"
 })
 
@@ -43,7 +50,9 @@ const banana = new Fruit({
 //     console.log("Saved 2 items");
 //   }
 // })
+
 // fruit.save();
+// banana.save();
 
 // Create a new schema/model for people collection
 const personSchema = new mongoose.Schema({
@@ -65,9 +74,34 @@ Fruit.find(function(err, fruits) {
   if (err) {
     console.log(err);
   } else {
+    mongoose.connection.close();
     fruits.forEach(function(fruit) {
       fruitsName.push(fruit.name);
     });
     console.log(fruitsName);
   }
 })
+
+// Fruit.updateOne({ _id: "5ffd79e47ad8030ca94e4707"},{ rating: 1},function(err) {
+//     if(err) {
+//       console.log(err);
+//     } else {
+//       console.log("Successfully updated the document.");
+//     }
+//   });
+
+  // Fruit.deleteOne( { _id: "5ffd842c9dcde60e2b0e591d"}, function(err) {
+  //   if(err) {
+  //     console.log(err);
+  //   } else {
+  //     console.log("Successfully deleted item.");
+  //   }
+  // });
+
+  Fruit.deleteMany( { name: "banana"}, function(err) {
+    if(err) {
+      console.log(err);
+    } else {
+      console.log("Successfully deleted items.");
+    }
+  });
